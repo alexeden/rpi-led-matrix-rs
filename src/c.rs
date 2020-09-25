@@ -9,13 +9,13 @@ pub struct LedColor {
 }
 
 #[allow(dead_code)]
-pub enum LedMatrix {}
+pub(crate) enum LedMatrix {}
 
-pub enum LedCanvas {}
+pub(crate) enum LedCanvas {}
 
 #[allow(dead_code)]
 impl LedCanvas {
-    pub fn get_size(&self) -> (i32, i32) {
+    pub fn led_canvas_get_size(&self) -> (i32, i32) {
         let (w, h): (c_int, c_int) = (0, 0);
         unsafe {
             led_canvas_get_size(self, w as *mut c_int, h as *mut c_int);
@@ -23,7 +23,47 @@ impl LedCanvas {
         (w as i32, h as i32)
     }
 
-    pub fn set(&mut self, x: i32, y: i32, color: &LedColor) {
+    pub fn led_canvas_clear(&mut self) {
+        unsafe {
+            led_canvas_clear(self);
+        }
+    }
+
+    pub fn draw_circle(&mut self, x: i32, y: i32, radius: u32, LedColor { r, g, b }: &LedColor) {
+        unsafe {
+            draw_circle(self, x as c_int, y as c_int, radius as c_int, *r, *g, *b);
+        }
+    }
+
+    pub fn draw_line(
+        &mut self,
+        x0: i32,
+        y0: i32,
+        x1: i32,
+        y1: i32,
+        LedColor { r, g, b }: &LedColor,
+    ) {
+        unsafe {
+            draw_line(
+                self,
+                x0 as c_int,
+                y0 as c_int,
+                x1 as c_int,
+                y1 as c_int,
+                *r,
+                *g,
+                *b,
+            );
+        }
+    }
+
+    pub fn led_canvas_fill(&mut self, LedColor { r, g, b }: &LedColor) {
+        unsafe {
+            led_canvas_fill(self, *r, *g, *b);
+        }
+    }
+
+    pub fn led_canvas_set_pixel(&mut self, x: i32, y: i32, color: &LedColor) {
         unsafe {
             led_canvas_set_pixel(self, x, y, color.r, color.g, color.b);
         }
@@ -33,22 +73,22 @@ impl LedCanvas {
 #[allow(dead_code)]
 #[link(name = "rgbmatrix")]
 extern "C" {
-    pub fn led_matrix_create_from_options_and_rt_options(
+    pub(crate) fn led_matrix_create_from_options_and_rt_options(
         opts: *mut LedMatrixOptions,
         rt_opts: *mut LedRuntimeOptions,
     ) -> *mut LedMatrix;
-    pub fn led_matrix_delete(matrix: *mut LedMatrix);
-    pub fn led_matrix_get_canvas(matrix: *mut LedMatrix) -> *mut LedCanvas;
-    pub fn led_canvas_get_size(canvas: *const LedCanvas, width: *mut c_int, height: *mut c_int);
-    pub fn led_canvas_set_pixel(canvas: *mut LedCanvas, x: c_int, y: c_int, r: u8, g: u8, b: u8);
-    pub fn led_canvas_clear(canvas: *mut LedCanvas);
-    pub fn led_canvas_fill(canvas: *mut LedCanvas, r: u8, g: u8, b: u8);
-    pub fn led_matrix_create_offscreen_canvas(matrix: *mut LedMatrix) -> *mut LedCanvas;
-    pub fn led_matrix_swap_on_vsync(
+    pub(crate) fn led_matrix_delete(matrix: *mut LedMatrix);
+    pub(crate) fn led_matrix_get_canvas(matrix: *mut LedMatrix) -> *mut LedCanvas;
+    pub(crate) fn led_canvas_get_size(canvas: *const LedCanvas, width: *mut c_int, height: *mut c_int);
+    pub(crate) fn led_canvas_set_pixel(canvas: *mut LedCanvas, x: c_int, y: c_int, r: u8, g: u8, b: u8);
+    pub(crate) fn led_canvas_clear(canvas: *mut LedCanvas);
+    pub(crate) fn led_canvas_fill(canvas: *mut LedCanvas, r: u8, g: u8, b: u8);
+    pub(crate) fn led_matrix_create_offscreen_canvas(matrix: *mut LedMatrix) -> *mut LedCanvas;
+    pub(crate) fn led_matrix_swap_on_vsync(
         matrix: *mut LedMatrix,
         canvas: *mut LedCanvas,
     ) -> *mut LedCanvas;
-    pub fn draw_circle(
+    pub(crate) fn draw_circle(
         canvas: *mut LedCanvas,
         x: c_int,
         y: c_int,
@@ -57,7 +97,7 @@ extern "C" {
         g: u8,
         b: u8,
     );
-    pub fn draw_line(
+    pub(crate) fn draw_line(
         canvas: *mut LedCanvas,
         x0: c_int,
         y0: c_int,
@@ -67,9 +107,9 @@ extern "C" {
         g: u8,
         b: u8,
     );
-// pub fn load_font(bdf_font_file: *const c_char) -> *mut LedFont;
-// pub fn delete_font(font: *mut LedFont);
-// pub fn draw_text(
+// pub(crate) fn load_font(bdf_font_file: *const c_char) -> *mut LedFont;
+// pub(crate) fn delete_font(font: *mut LedFont);
+// pub(crate) fn draw_text(
 //     canvas: *mut LedCanvas,
 //     font: *const LedFont,
 //     x: c_int,

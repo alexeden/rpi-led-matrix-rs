@@ -1,4 +1,5 @@
 extern crate libc;
 
 mod c;
-mod options;
+pub mod canvas;
+pub mod options;
