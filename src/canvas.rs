@@ -1,4 +1,5 @@
 use super::c;
+use super::options::{LedMatrixOptions, LedRuntimeOptions};
 
 /// The Rust handle for the matrix canvas to draw on.
 ///
@@ -10,4 +11,7 @@ use super::c;
 /// ```
 pub struct LedCanvas {
     pub(crate) handle: *mut c::LedCanvas,
+}
+
+impl LedCanvas {
 }
