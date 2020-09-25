@@ -4,6 +4,9 @@ version = "0.1.0"
 authors = ["Alex Eden <alexandereden91@gmail.com>"]
 edition = "2018"
 
+[[example]]
+name = "minimal"
+path = "examples/minimal.rs"
 
 [dependencies]
 libc = "0.2.77"
