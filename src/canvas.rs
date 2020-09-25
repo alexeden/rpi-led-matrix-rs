@@ -36,14 +36,7 @@ impl LedCanvas {
         }
     }
 
-    pub fn line(
-        &mut self,
-        x0: i32,
-        y0: i32,
-        x1: i32,
-        y1: i32,
-        LedColor { r, g, b }: &LedColor,
-    ) {
+    pub fn line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, LedColor { r, g, b }: &LedColor) {
         unsafe {
             c::draw_line(
                 self.handle,

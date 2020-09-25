@@ -1,0 +1,4 @@
+[tasks.test-watch]
+command = "echo"
+args = ["something changed"]
+watch = true

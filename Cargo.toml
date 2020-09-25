@@ -4,12 +4,17 @@ version = "0.1.0"
 authors = ["Alex Eden <alexandereden91@gmail.com>"]
 edition = "2018"
 
+[[bin]]
+name = "sync"
+path = "./sync.rs"
+
 [[example]]
 name = "minimal"
 path = "examples/minimal.rs"
 
 [dependencies]
 libc = "0.2.77"
+rusync = "0.6"
 
 [build-dependencies]
 cc = "1.0.60"
