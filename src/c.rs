@@ -1,10 +1,9 @@
-use super::options::{LedMatrixOptions, LedRuntimeOptions};
+use crate::options::{LedMatrixOptions, LedRuntimeOptions};
 use libc::c_int;
 
 pub(crate) enum LedMatrix {}
 pub(crate) enum LedCanvas {}
 
-#[allow(dead_code)]
 #[link(name = "rgbmatrix")]
 extern "C" {
     pub(crate) fn led_matrix_create_from_options_and_rt_options(
@@ -52,28 +51,4 @@ extern "C" {
         g: u8,
         b: u8,
     );
-// pub(crate) fn load_font(bdf_font_file: *const c_char) -> *mut LedFont;
-// pub(crate) fn delete_font(font: *mut LedFont);
-// pub(crate) fn draw_text(
-//     canvas: *mut LedCanvas,
-//     font: *const LedFont,
-//     x: c_int,
-//     y: c_int,
-//     r: u8,
-//     g: u8,
-//     b: u8,
-//     utf8_text: *const c_char,
-//     kerning_offset: c_int,
-// ) -> c_int;
-// pub fn vertical_draw_text(
-//     canvas: *mut LedCanvas,
-//     font: *const LedFont,
-//     x: c_int,
-//     y: c_int,
-//     r: u8,
-//     g: u8,
-//     b: u8,
-//     utf8_text: *const c_char,
-//     kerning_offset: c_int,
-// ) -> c_int;
 }
