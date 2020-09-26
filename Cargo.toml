@@ -2,6 +2,7 @@
 name = "rpi_led_matrix"
 version = "0.1.0"
 authors = ["Alex Eden <alexandereden91@gmail.com>"]
+links = "rgbmatrix"
 edition = "2018"
 
 [[bin]]
