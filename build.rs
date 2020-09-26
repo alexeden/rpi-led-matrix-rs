@@ -6,9 +6,12 @@ fn build_extern() {}
 #[cfg(target_os = "linux")]
 fn build_extern() {
     let compilation = cc::Build::new()
-        // .cpp(true)
+        .cpp(true)
         .flag("-Wno-missing-field-initializers")
         .flag("-Wno-unused-parameter")
+        .flag("-ltr")
+        .flag("-lm")
+        .flag("-lpthread")
         .include("./extern/include")
         .files(&[
             "./extern/lib/thread.cc",
@@ -24,7 +27,8 @@ fn build_extern() {
             "./extern/lib/bdf-font.cc",
             "./extern/lib/hardware-mapping.c",
         ])
-        .try_compile("rgbmatrix");
+        .target("librgbmatrix")
+        .try_compile("librgbmatrix");
 
     if let Err(e) = compilation {
         println!("cargo:warning={:?}", e);
@@ -32,7 +36,10 @@ fn build_extern() {
 }
 
 fn main() {
+    println!("cargo:warning={}", "Starting build.rs");
     // println!("cargo:rerun-if-changed=./extern");
     println!("cargo:rustc-flags=-l dylib=stdc++");
-    build_extern();
+    // println!("cargo:rustc-link-lib=librgbmatrix");
+    println!("cargo:rustc-link-search=./extern/lib");
+    // build_extern();
 }
