@@ -1,26 +1,11 @@
-//! rsync
-//!     -ahPr
-//!     --rsh={command}
-//!     --exclude=.git
-//!     --exclude=.DS_Store
-//!     --exclude=node_modules
-//!     --exclude=build
-//!     --exclude=package-lock.json
-//!     --exclude=.vscode
-//!     --exclude=dist
-//!     /Users/alexeden/code/rpi-led-matrix
-//!     pi@192.168.1.201:~
 #[macro_use]
 extern crate serde;
 
 use std::io;
-use std::io::Write;
 use std::path::PathBuf;
 use std::{collections::HashMap, fs::File};
 use std::{env::current_dir, process::ExitStatus};
 use std::{io::Read, process::Command};
-// use serde_derive::D
-// use std::path::PathBuf
 
 const SYNC_CONFIG_FILENAME: &str = "sync.toml";
 
@@ -31,12 +16,14 @@ struct SyncConfig {
     config: Config,
     remote: HashMap<String, Remote>,
 }
+
 #[derive(Debug, Deserialize)]
 struct Config {
     command: String,
     exclude: Vec<String>,
     selected_remote: String,
 }
+
 #[derive(Debug, Deserialize)]
 struct Remote {
     dest_dir: String,

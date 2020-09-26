@@ -1,4 +1,4 @@
-[tasks.test-watch]
-command = "echo"
-args = ["something changed"]
+[tasks.sync-remote]
+command = "cargo"
+args = ["run", "--bin", "sync"]
 watch = true
