@@ -62,11 +62,23 @@ impl SyncConfig {
                 self.config.selected_remote
             ))
     }
-}
 
-impl Into<Command> for SyncConfig {
-    fn into(self) -> Command {
-        Command::new("rsync")
+    pub fn sync(&self) {
+        let exclude_args = &self
+            .config
+            .exclude
+            .iter()
+            .map(|ex| format!("--exclude={}", ex))
+            .collect::<Vec<String>>();
+
+        let mut cmd = Command::new("rsync");
+
+        let cmd = cmd
+            .arg("ahPr")
+            .args(&["--rsh", &self.config.command])
+            .args(exclude_args);
+
+        println!("command: {:?}", cmd);
     }
 }
 
@@ -78,8 +90,9 @@ fn main() {
 
     println!("{:#?}", config);
 
-    let cmd: Command = config.into();
-    println!("{:?}", cmd);
+    config.sync();
+
+    println!("{}", current_dir().unwrap().to_str().unwrap());
 }
 
 fn find_file(file_name: &str) -> Option<PathBuf> {
