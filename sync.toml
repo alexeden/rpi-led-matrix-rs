@@ -1,9 +1,10 @@
 [config]
 command = "ssh"
 exclude = [".git", ".DS_Store", "target", ".vscode"]
+selected_remote = "x"
 
 
-[[remote.x]]
-username = "pi"
-directory = "~"
-hostname = "192.168.1.201"
+[remote.ape-pi-4b-64]
+username = "dietpi"
+dest_dir = "~"
+hostname = "192.168.1.196"
