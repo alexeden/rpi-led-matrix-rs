@@ -1,7 +1,7 @@
 [config]
 command = "ssh"
 exclude = [".git", ".DS_Store", "target", ".vscode"]
-selected_remote = "x"
+selected_remote = "ape-pi-4b-64"
 
 
 [remote.ape-pi-4b-64]

@@ -25,6 +25,8 @@ const SYNC_CONFIG_FILENAME: &str = "sync.toml";
 
 #[derive(Debug, Deserialize)]
 struct SyncConfig {
+    #[serde(skip)]
+    path: PathBuf,
     config: Config,
     remote: HashMap<String, Remote>,
 }
@@ -41,6 +43,12 @@ struct Remote {
     username: String,
 }
 
+impl ToString for Remote {
+    fn to_string(&self) -> String {
+        format!("{}@{}:{}", self.username, self.hostname, self.dest_dir)
+    }
+}
+
 impl SyncConfig {
     pub fn from_path(path: &PathBuf) -> Result<Self, io::Error> {
         File::open(path)
@@ -52,33 +60,34 @@ impl SyncConfig {
                 toml::from_str::<SyncConfig>(&contents)
                     .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))
             })
+            .map(|mut config| {
+                config.path = path.to_owned();
+                config
+            })
     }
 
     pub fn selected_remote(&self) -> &Remote {
         self.remote
             .get(&self.config.selected_remote)
             .expect(&format!(
-                "selected_remote \"{}\" matches a defined remote",
+                "Selected remote \"{}\" does not match any defined remotes.",
                 self.config.selected_remote
             ))
     }
 
     pub fn sync(&self) {
-        let exclude_args = &self
-            .config
-            .exclude
-            .iter()
-            .map(|ex| format!("--exclude={}", ex))
-            .collect::<Vec<String>>();
-
         let mut cmd = Command::new("rsync");
+        let cmd = cmd.arg("ahPr").args(&["--rsh", &self.config.command]);
 
-        let cmd = cmd
-            .arg("ahPr")
-            .args(&["--rsh", &self.config.command])
-            .args(exclude_args);
+        &self.config.exclude.iter().for_each(|ex| {
+            cmd.args(&["--exclude", ex]);
+        });
 
-        println!("command: {:?}", cmd);
+        // Source
+        cmd.arg(self.path.parent().unwrap());
+
+        // Destination
+        cmd.arg(self.selected_remote().to_string());
     }
 }
 
