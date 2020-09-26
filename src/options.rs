@@ -1,3 +1,6 @@
+use crate::option_types::RowAddressType;
+use crate::option_types::MuxType;
+use crate::option_types::ScanMode;
 use libc::{c_char, c_int};
 use std::ffi::CString;
 
@@ -118,8 +121,8 @@ impl LedMatrixOptions {
         }
     }
 
-    /// Sets the scan mode. 0: progressive, 1: interlaced.
-    pub fn set_scan_mode(&mut self, scan_mode: u32) {
+    /// Sets the scan mode.
+    pub fn set_scan_mode(&mut self, scan_mode: ScanMode) {
         self.scan_mode = scan_mode as c_int;
     }
 
@@ -162,36 +165,12 @@ impl LedMatrixOptions {
     }
 
     /// Sets the type of multiplexing used.
-    ///
-    /// 0.  direct
-    /// 1.  Stripe
-    /// 2.  Checkered
-    /// 3.  Spiral
-    /// 4.  ZStripe
-    /// 5.  ZnMirrorZStripe
-    /// 6.  coreman
-    /// 7.  Kaler2Scan
-    /// 8.  ZStripeUneven
-    /// 9.  P10-128x4-Z
-    /// 10. QiangLiQ8
-    /// 11. InversedZStripe
-    /// 12. P10Outdoor1R1G1-1
-    /// 13. P10Outdoor1R1G1-2
-    /// 14. P10Outdoor1R1G1-3
-    /// 15. P10CoremanMapper
-    /// 16. P8Outdoor1R1G1
-    pub fn set_multiplexing(&mut self, multiplexing: u32) {
+    pub fn set_multiplexing(&mut self, multiplexing: MuxType) {
         self.multiplexing = multiplexing as c_int;
     }
 
     /// Sets the type of row addressing to be used.
-    ///
-    /// 0. default
-    /// 1. AB-addressed panels
-    /// 2. direct row select
-    /// 3. ABC-addressed panels
-    /// 4. ABC Shift + DE direct
-    pub fn set_row_addr_type(&mut self, row_addr_type: u32) {
+    pub fn set_row_addr_type(&mut self, row_addr_type: RowAddressType) {
         self.row_address_type = row_addr_type as c_int;
     }
 
