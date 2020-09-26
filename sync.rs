@@ -13,10 +13,11 @@
 #[macro_use]
 extern crate serde;
 
-use std::env::current_dir;
 use std::io;
+use std::io::Write;
 use std::path::PathBuf;
 use std::{collections::HashMap, fs::File};
+use std::{env::current_dir, process::ExitStatus};
 use std::{io::Read, process::Command};
 // use serde_derive::D
 // use std::path::PathBuf
@@ -75,9 +76,13 @@ impl SyncConfig {
             ))
     }
 
-    pub fn sync(&self) {
+    pub fn sync(&self) -> ExitStatus {
         let mut cmd = Command::new("rsync");
-        let cmd = cmd.arg("ahPr").args(&["--rsh", &self.config.command]);
+        let cmd = cmd.env("TERM", "xterm-256color").arg("-ahr").args(&[
+            "--progress",
+            "--rsh",
+            &self.config.command,
+        ]);
 
         &self.config.exclude.iter().for_each(|ex| {
             cmd.args(&["--exclude", ex]);
@@ -88,6 +93,8 @@ impl SyncConfig {
 
         // Destination
         cmd.arg(self.selected_remote().to_string());
+
+        cmd.status().expect("Failed to run command.")
     }
 }
 
@@ -95,13 +102,8 @@ fn main() {
     let config_path = find_file(SYNC_CONFIG_FILENAME)
         .expect("A config file named sync.toml exists in the current or ancestor directory.");
 
-    let config = SyncConfig::from_path(&config_path).unwrap();
-
-    println!("{:#?}", config);
-
-    config.sync();
-
-    println!("{}", current_dir().unwrap().to_str().unwrap());
+    let status = SyncConfig::from_path(&config_path).unwrap().sync();
+    println!("Done! Exit status: {:?}", status);
 }
 
 fn find_file(file_name: &str) -> Option<PathBuf> {
