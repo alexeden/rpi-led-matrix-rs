@@ -277,10 +277,9 @@ pub enum PixelMapper {
 
 pub struct PixelMapperConfig(Vec<PixelMapper>);
 
-impl Into<CStringPtr> for PixelMapperConfig {
-    fn into(self) -> CStringPtr {
-        let mappers = self
-            .0
+impl Into<String> for PixelMapperConfig {
+    fn into(self) -> String {
+        self.0
             .into_iter()
             .map(|mapper| match mapper {
                 PixelMapper::U => "U-mapper".to_string(),
@@ -289,9 +288,14 @@ impl Into<CStringPtr> for PixelMapperConfig {
                 PixelMapper::Rotate(angle) => format!("Rotate:{:?}", angle),
             })
             .collect::<Vec<String>>()
-            .join(";");
+            .join(";")
+    }
+}
 
-        CString::new(mappers).unwrap().into_raw()
+impl Into<CStringPtr> for PixelMapperConfig {
+    fn into(self) -> CStringPtr {
+        let config: String = self.into();
+        CString::new(config).unwrap().into_raw()
     }
 }
 
@@ -381,4 +385,15 @@ impl Default for PanelType {
 pub enum ScanMode {
     Progressive,
     Interlaced,
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    pub fn pixel_mapper_config() {
+        let config: String = PixelMapperConfig(vec![PixelMapper::U, PixelMapper::Rotate(90)]).into();
+        assert_eq!(config, "U-mapper;Rotate:90");
+    }
 }
