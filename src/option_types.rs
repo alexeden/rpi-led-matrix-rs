@@ -1,3 +1,30 @@
+use libc::c_char;
+use std::ffi::CString;
+
+pub enum GpioMapping {
+    Regular,
+    AdafruitHat,
+    AdafruitHatPwm,
+    RegularPi1,
+    Classic,
+    ClassicPi1,
+}
+
+impl GpioMapping {
+    pub(crate) fn into_raw(&self) -> *mut c_char {
+        let mapping_str = match self {
+            Self::Regular => "regular",
+            Self::AdafruitHat => "adafruit-hat",
+            Self::AdafruitHatPwm => "adafruit-hat-pwm",
+            Self::RegularPi1 => "regular-pi1",
+            Self::Classic => "classic",
+            Self::ClassicPi1 => "classic-pi1",
+        };
+
+        CString::new(mapping_str).unwrap().into_raw()
+    }
+}
+
 #[derive(IntoPrimitive)]
 #[repr(u32)]
 pub enum MuxType {

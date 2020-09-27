@@ -1,5 +1,6 @@
-use crate::option_types::RowAddressType;
+use crate::option_types::GpioMapping;
 use crate::option_types::MuxType;
+use crate::option_types::RowAddressType;
 use crate::option_types::ScanMode;
 use libc::{c_char, c_int};
 use std::ffi::CString;
@@ -68,11 +69,11 @@ impl LedMatrixOptions {
         }
     }
 
-    /// Sets the type of GPIO mapping used (e.g., "adafruit-hat-pwm").
-    pub fn set_hardware_mapping(&mut self, mapping: &str) {
+    /// Sets the type of GPIO mapping used
+    pub fn set_hardware_mapping(&mut self, mapping: GpioMapping) {
         unsafe {
             let _ = CString::from_raw(self.hardware_mapping);
-            self.hardware_mapping = CString::new(mapping).unwrap().into_raw();
+            self.hardware_mapping = mapping.into_raw();
         }
     }
 
