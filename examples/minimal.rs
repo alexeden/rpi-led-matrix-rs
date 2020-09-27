@@ -1,8 +1,26 @@
-use rpi_led_matrix::matrix::LedMatrix;
+use rpi_led_matrix::{led::LedColor, matrix::LedMatrix};
 
 fn main() {
-    let mat = LedMatrix::new(None, None).expect("Matrix creation");
+    let mut mat = LedMatrix::new(None, None).expect("Matrix creation");
+    mat.sync();
 
-    mat.set_brightness(50);
-    println!("brightness: {:?}", mat.get_brightness());
+    mat.brightness_set(50);
+    mat.line(
+        0,
+        0,
+        100,
+        100,
+        &LedColor {
+            r: 255,
+            b: 255,
+            g: 255,
+        },
+    );
+    println!("brightness: {:?}", mat.brightness_get());
+
+    println!(
+        "Matrix height: {:?}, width: {:?}",
+        mat.height(),
+        mat.width()
+    );
 }
