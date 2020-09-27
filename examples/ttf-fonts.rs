@@ -26,21 +26,18 @@ fn main() {
 
     (0..).for_each(|dx| {
         mat.clear();
-        let dx = dx % mat.width();
+        let dx = dx % (2 * mat.width());
+        let text = "Serving TrueType lewks.";
+        let layout_start = point(0., mat.height() as f32 - v_metrics.ascent.ceil());
 
-        font.layout(
-            "Serving TTF lewks.",
-            scale,
-            point(0., mat.height() as f32 - v_metrics.ascent.ceil()),
-        )
-        .for_each(|glyph| {
+        font.layout(text, scale, layout_start).for_each(|glyph| {
             if let Some(bounding_box) = glyph.pixel_bounding_box() {
                 // Draw the glyph into the image per-pixel by using the draw closure
                 glyph.draw(|x, y, v| {
                     let alpha = (255. * v) as u8;
                     let x = x as i32 - dx + bounding_box.min.x;
                     mat.set(
-                        if x < 0 { x + mat.width() } else { x },
+                        if x < 0 { x + 2 * mat.width() } else { x },
                         y as i32 + bounding_box.min.y,
                         &Color::of(alpha, alpha, alpha),
                     );
