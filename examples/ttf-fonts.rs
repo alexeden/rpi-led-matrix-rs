@@ -13,7 +13,7 @@ fn main() {
     let font = {
         let font_path = std::env::current_dir()
             .unwrap()
-            .join("examples/oswald-light.ttf");
+            .join("examples/oswald.ttf");
         let data = std::fs::read(&font_path).unwrap();
         Font::try_from_vec(data).unwrap_or_else(|| {
             panic!(format!(
@@ -37,7 +37,7 @@ fn main() {
     let mut mat = LedMatrix::new(Some(mat_options), Some(rt_options)).expect("Matrix creation");
 
     let text = "Serving TTF lewks.";
-    let scale = Scale::uniform(16.);
+    let scale = Scale::uniform(32.);
     let v_metrics = font.v_metrics(scale);
 
     let glyphs: Vec<_> = font
@@ -50,7 +50,8 @@ fn main() {
         if let Some(bounding_box) = glyph.pixel_bounding_box() {
             // Draw the glyph into the image per-pixel by using the draw closure
             glyph.draw(|x, y, v| {
-                let alpha = (255. * v) as u8;
+                let alpha = if v < 0.5 { 0 } else { 255 };
+                //  (255. * v * v * v) as u8;
                 // println!("x: {:?}, y: {:?}", x, y);
                 mat.set(
                     (x + bounding_box.min.x as u32) as i32,
@@ -68,6 +69,5 @@ fn main() {
         }
     }
     mat.sync();
-    wait(5000);
-    // println!("glyphs: {:?}", glyphs);
+    wait(120000);
 }
