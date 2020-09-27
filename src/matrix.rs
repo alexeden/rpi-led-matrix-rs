@@ -4,6 +4,7 @@ use crate::{
 
 pub struct LedMatrix {
     handle: *mut c::LedMatrix,
+    canvas: *mut c::LedCanvas,
 }
 
 impl LedMatrix {
@@ -23,10 +24,16 @@ impl LedMatrix {
         };
 
         if handle.is_null() {
-            Err("Failed to create LedMatrix. Handle is null.")
-        } else {
-            Ok(Self { handle })
+            return Err("Failed to create LedMatrix. Handle is null.");
         }
+
+        let canvas = unsafe { c::led_matrix_create_offscreen_canvas(handle) };
+
+        if canvas.is_null() {
+            return Err("Failed to create the matrix LedCanvas. Canvas handle is null.");
+        }
+
+        Ok(Self { handle, canvas })
     }
 
     /// Retrieves the on screen canvas.
