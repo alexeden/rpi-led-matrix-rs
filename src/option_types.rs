@@ -1,6 +1,8 @@
 use libc::c_char;
 use std::ffi::CString;
 
+type CStringPtr = *mut c_char;
+
 pub enum GpioMapping {
     Regular,
     AdafruitHat,
@@ -10,8 +12,8 @@ pub enum GpioMapping {
     ClassicPi1,
 }
 
-impl GpioMapping {
-    pub(crate) fn into_raw(&self) -> *mut c_char {
+impl Into<CStringPtr> for GpioMapping {
+    fn into(self) -> CStringPtr {
         let mapping_str = match self {
             Self::Regular => "regular",
             Self::AdafruitHat => "adafruit-hat",
@@ -26,7 +28,7 @@ impl GpioMapping {
 }
 
 #[derive(IntoPrimitive)]
-#[repr(u32)]
+#[repr(i32)]
 pub enum MuxType {
     Direct,
     Stripe,
@@ -47,33 +49,89 @@ pub enum MuxType {
     P8Outdoor1R1G1,
 }
 
-#[derive(IntoPrimitive)]
-#[repr(u32)]
-pub enum RowAddressType {
-    /**
-     * Corresponds to direct setting of the row.
-     */
-    Direct,
-    /**
-     * Used for panels that only have A/B. (typically some 64x64 panels)
-     */
-    AB,
-    /**
-     * Direct row select
-     */
-    DirectRow,
-    /**
-     * ABC addressed panels
-     */
-    ABC,
-    /**
-     * 4 = ABC Shift + DE direct
-     */
-    ABCShift,
+impl Default for MuxType {
+    fn default() -> Self {
+        Self::Direct
+    }
+}
+
+pub enum RgbSequence {
+    RGB,
+    BGR,
+    BRG,
+    RBG,
+    GRB,
+    GBR,
+}
+
+impl Default for RgbSequence {
+    fn default() -> Self {
+        Self::RGB
+    }
+}
+
+impl Into<CStringPtr> for RgbSequence {
+    fn into(self) -> CStringPtr {
+        let seq = match self {
+            Self::RGB => "RGB",
+            Self::BGR => "BGR",
+            Self::BRG => "BRG",
+            Self::RBG => "RBG",
+            Self::GRB => "GRB",
+            Self::GBR => "GBR",
+        };
+
+        CString::new(seq).unwrap().into_raw()
+    }
 }
 
 #[derive(IntoPrimitive)]
-#[repr(u32)]
+#[repr(i32)]
+pub enum RowAddressType {
+    //// Corresponds to direct setting of the row.
+    Direct,
+    /// Used for panels that only have A/B. (typically some 64x64 panels)
+    AB,
+    /// Direct row select.
+    DirectRow,
+    /// ABC addressed panels
+    ABC,
+    /// 4 = ABC Shift + DE direct
+    ABCShift,
+}
+
+impl Default for RowAddressType {
+    fn default() -> Self {
+        Self::Direct
+    }
+}
+
+pub enum PanelType {
+    FM6126,
+    FM6127,
+    Unset,
+}
+
+impl Into<CStringPtr> for PanelType {
+    fn into(self) -> CStringPtr {
+        let mapping_str = match self {
+            Self::FM6126 => "fm6126",
+            Self::FM6127 => "fm6127",
+            Self::Unset => "",
+        };
+
+        CString::new(mapping_str).unwrap().into_raw()
+    }
+}
+
+impl Default for PanelType {
+    fn default() -> Self {
+        Self::Unset
+    }
+}
+
+#[derive(IntoPrimitive)]
+#[repr(i32)]
 pub enum ScanMode {
     Progressive,
     Interlaced,

@@ -1,4 +1,4 @@
-use crate::option_types::GpioMapping;
+use crate::option_types::{GpioMapping, PanelType, RgbSequence};
 use crate::option_types::MuxType;
 use crate::option_types::RowAddressType;
 use crate::option_types::ScanMode;
@@ -51,18 +51,18 @@ impl LedMatrixOptions {
             chain_length: 1,
             cols: 32,
             disable_hardware_pulsing: 1,
-            hardware_mapping: CString::new("regular").unwrap().into_raw(),
+            hardware_mapping: GpioMapping::Regular.into(),
             inverse_colors: 0,
-            led_rgb_sequence: CString::new("RGB").unwrap().into_raw(),
+            led_rgb_sequence: RgbSequence::default().into(),
             limit_refresh_rate_hz: 0,
-            multiplexing: 0,
-            panel_type: CString::new("").unwrap().into_raw(),
+            multiplexing: MuxType::default().into(),
+            panel_type: PanelType::default().into(),
             parallel: 1,
             pixel_mapper_config: CString::new("").unwrap().into_raw(),
             pwm_bits: 11,
             pwm_dither_bits: 1,
             pwm_lsb_nanoseconds: 1000,
-            row_address_type: 0,
+            row_address_type: RowAddressType::default().into(),
             rows: 32,
             scan_mode: 0,
             show_refresh_rate: 1,
@@ -73,27 +73,27 @@ impl LedMatrixOptions {
     pub fn set_hardware_mapping(&mut self, mapping: GpioMapping) {
         unsafe {
             let _ = CString::from_raw(self.hardware_mapping);
-            self.hardware_mapping = mapping.into_raw();
+            self.hardware_mapping = mapping.into();
         }
     }
 
     /// Sets the number of rows on the panels being used. Typically 8, 16, 32 or 64.
-    pub fn set_rows(&mut self, rows: u32) {
+    pub fn set_rows(&mut self, rows: i32) {
         self.rows = rows as c_int;
     }
 
     /// Sets the number of columns on the panels being used. Typically 32 or 64.
-    pub fn set_cols(&mut self, cols: u32) {
+    pub fn set_cols(&mut self, cols: i32) {
         self.cols = cols as c_int;
     }
 
     /// Sets the number of panels daisy-chained together.
-    pub fn set_chain_length(&mut self, chain_length: u32) {
+    pub fn set_chain_length(&mut self, chain_length: i32) {
         self.chain_length = chain_length as c_int;
     }
 
     /// Sets the number of parallel chains. Valid range: [1,3].
-    pub fn set_parallel(&mut self, parallel: u32) {
+    pub fn set_parallel(&mut self, parallel: i32) {
         self.parallel = parallel as c_int;
     }
 
@@ -108,7 +108,7 @@ impl LedMatrixOptions {
     }
 
     /// Sets the number of nanoseconds of delay for our LSB
-    pub fn set_pwm_lsb_nanoseconds(&mut self, pwm_lsb_nanoseconds: u32) {
+    pub fn set_pwm_lsb_nanoseconds(&mut self, pwm_lsb_nanoseconds: i32) {
         self.pwm_lsb_nanoseconds = pwm_lsb_nanoseconds as c_int;
     }
 
@@ -128,10 +128,10 @@ impl LedMatrixOptions {
     }
 
     /// Sets the ordering of the LEDs on your panel.
-    pub fn set_led_rgb_sequence(&mut self, sequence: &str) {
+    pub fn set_led_rgb_sequence(&mut self, sequence: RgbSequence) {
         unsafe {
             let _ = CString::from_raw(self.led_rgb_sequence);
-            self.led_rgb_sequence = CString::new(sequence).unwrap().into_raw();
+            self.led_rgb_sequence = sequence.into();
         }
     }
 
@@ -167,7 +167,7 @@ impl LedMatrixOptions {
 
     /// Sets the type of multiplexing used.
     pub fn set_multiplexing(&mut self, multiplexing: MuxType) {
-        self.multiplexing = multiplexing as c_int;
+        self.multiplexing = multiplexing.into();
     }
 
     /// Sets the type of row addressing to be used.
@@ -178,20 +178,20 @@ impl LedMatrixOptions {
     /// Limit refresh rate to this frequency in Hz. (0 = no limit)
     ///
     /// Useful to keep a constant refresh rate on loaded system.
-    pub fn set_limit_refresh(&mut self, limit_refresh: u32) {
+    pub fn set_limit_refresh(&mut self, limit_refresh: i32) {
         self.limit_refresh_rate_hz = limit_refresh as c_int;
     }
 
     /// Configures how many bits to use for time-based dithering.
-    pub fn set_pwm_dither_bits(&mut self, pwm_dither_bits: u32) {
+    pub fn set_pwm_dither_bits(&mut self, pwm_dither_bits: i32) {
         self.pwm_dither_bits = pwm_dither_bits as c_int;
     }
 
     /// Needed to initialize special panels. Supported: 'FM6126A', 'FM6127'
-    pub fn set_panel_type(&mut self, panel_type: &str) {
+    pub fn set_panel_type(&mut self, panel_type: PanelType) {
         unsafe {
             let _ = CString::from_raw(self.panel_type);
-            self.panel_type = CString::new(panel_type).unwrap().into_raw();
+            self.panel_type = panel_type.into();
         }
     }
 }
@@ -224,7 +224,7 @@ impl LedRuntimeOptions {
     }
 
     /// Sets the GPIO slowdown, in . Needed for faster Pis/slower panels
-    pub fn set_gpio_slowdown(&mut self, gpio_slowdown: u32) {
+    pub fn set_gpio_slowdown(&mut self, gpio_slowdown: i32) {
         self.gpio_slowdown = gpio_slowdown as i32;
     }
 
