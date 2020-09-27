@@ -27,4 +27,6 @@ fn main() {
         mat.height(),
         mat.width()
     );
+
+    std::thread::sleep(std::time::Duration::from_secs(5));
 }

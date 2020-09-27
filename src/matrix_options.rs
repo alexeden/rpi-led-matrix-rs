@@ -45,7 +45,7 @@ impl LedMatrixOptions {
             multiplexing: MuxType::default().into(),
             panel_type: PanelType::default().into(),
             parallel: 1,
-            pixel_mapper_config: CString::new("").unwrap().into_raw(),
+            pixel_mapper_config: PixelMapperConfig::default().into(),
             pwm_bits: 11,
             pwm_dither_bits: 1,
             pwm_lsb_nanoseconds: 1000,
@@ -131,17 +131,10 @@ impl LedMatrixOptions {
     }
 
     /// Semicolon-separated list of pixel-mappers to arrange pixels (e.g. "U-mapper;Rotate:90").
-    ///
-    /// Valid mapping options
-    ///
-    /// * Mirror
-    /// * Rotate:<Angle>
-    /// * U-mapper
-    /// * V-mapper
-    pub fn set_pixel_mapper_config(mut self, mapper: &str) -> Self {
+    pub fn set_pixel_mapper_config(mut self, mapper: PixelMapperConfig) -> Self {
         unsafe {
             let _ = CString::from_raw(self.pixel_mapper_config);
-            self.pixel_mapper_config = CString::new(mapper).unwrap().into_raw();
+            self.pixel_mapper_config = mapper.into();
         }
         self
     }
@@ -272,6 +265,39 @@ pub enum MuxType {
 impl Default for MuxType {
     fn default() -> Self {
         Self::Direct
+    }
+}
+
+pub enum PixelMapper {
+    U,
+    Rotate(i32),
+    V,
+    VZ,
+}
+
+pub struct PixelMapperConfig(Vec<PixelMapper>);
+
+impl Into<CStringPtr> for PixelMapperConfig {
+    fn into(self) -> CStringPtr {
+        let mappers = self
+            .0
+            .into_iter()
+            .map(|mapper| match mapper {
+                PixelMapper::U => "U-mapper".to_string(),
+                PixelMapper::V => "V-mapper".to_string(),
+                PixelMapper::VZ => "V-mapper:Z".to_string(),
+                PixelMapper::Rotate(angle) => format!("Rotate:{:?}", angle),
+            })
+            .collect::<Vec<String>>()
+            .join(";");
+
+        CString::new(mappers).unwrap().into_raw()
+    }
+}
+
+impl Default for PixelMapperConfig {
+    fn default() -> Self {
+        Self(vec![])
     }
 }
 
