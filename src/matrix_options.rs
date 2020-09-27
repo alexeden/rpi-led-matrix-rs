@@ -51,7 +51,7 @@ impl LedMatrixOptions {
             pwm_lsb_nanoseconds: 1000,
             row_address_type: RowAddressType::default().into(),
             rows: 32,
-            scan_mode: 0,
+            scan_mode: ScanMode::default().into(),
             show_refresh_rate: 1,
         }
     }
@@ -385,6 +385,12 @@ impl Default for PanelType {
 pub enum ScanMode {
     Progressive,
     Interlaced,
+}
+
+impl Default for ScanMode {
+    fn default() -> Self {
+        Self::Progressive
+    }
 }
 
 #[cfg(test)]

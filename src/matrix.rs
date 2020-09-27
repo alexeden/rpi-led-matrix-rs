@@ -39,13 +39,19 @@ impl LedMatrix {
             c::led_canvas_get_size(canvas, w as *mut c_int, h as *mut c_int);
         }
 
-        println!("new() - w = {:?}, h = {:?}", w, h);
-
         Ok(Self {
             handle,
             canvas,
             size: (w as i32, h as i32),
         })
+    }
+
+    pub fn get_size(&self) -> (i32, i32) {
+        let (w, h): (c_int, c_int) = (0, 0);
+        unsafe {
+            c::led_canvas_get_size(self.canvas, w as *mut c_int, h as *mut c_int);
+        }
+        (w, h)
     }
 
     /// Swap the canvas on next v-sync. This is the only way to actually update the matrix.
