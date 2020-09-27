@@ -1,7 +1,12 @@
 use rpi_led_matrix::{
+    matrix::LedMatrix,
     matrix_options::{GpioMapping, LedMatrixOptions},
     runtime_options::LedRuntimeOptions,
 };
+
+fn wait(secs: u64) {
+    std::thread::sleep(std::time::Duration::from_secs(secs));
+}
 
 fn main() {
     let mat_options = LedMatrixOptions::default()
@@ -12,4 +17,10 @@ fn main() {
         .set_parallel(1);
 
     let rt_options = LedRuntimeOptions::default().set_gpio_slowdown(4);
+
+    let mut mat = LedMatrix::new(Some(mat_options), Some(rt_options)).expect("Matrix creation");
+
+    mat.sync();
+
+    wait(5);
 }
