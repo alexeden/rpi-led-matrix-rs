@@ -1,6 +1,6 @@
-use super::c;
-use super::canvas::LedCanvas;
-use super::options::{LedMatrixOptions, LedRuntimeOptions};
+use crate::{
+    c, canvas::LedCanvas, matrix_options::LedMatrixOptions, runtime_options::LedRuntimeOptions,
+};
 
 pub struct LedMatrix {
     handle: *mut c::LedMatrix,

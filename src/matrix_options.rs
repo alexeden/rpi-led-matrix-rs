@@ -1,11 +1,8 @@
-use crate::option_types::{GpioMapping, PanelType, RgbSequence};
-use crate::option_types::MuxType;
-use crate::option_types::RowAddressType;
-use crate::option_types::ScanMode;
 use libc::{c_char, c_int};
 use std::ffi::CString;
 
 type LedMatrixOptionsResult = Result<(), &'static str>;
+type CStringPtr = *mut c_char;
 
 /// The Rust representation of LedMatrixOptions, which contains parameters to specify your hardware setup.
 /// !!! DO NOT CHANGE THE ORDER OF THE FIELDS !!!
@@ -31,16 +28,6 @@ pub struct LedMatrixOptions {
     pub(crate) show_refresh_rate: c_char,
     pub(crate) inverse_colors: c_char,
     pub(crate) limit_refresh_rate_hz: c_int,
-}
-
-/// The Rust representation of LedRuntimeOptions, which contains parameters to specify how the library behaves at runtime.
-#[derive(Debug)]
-#[repr(C)]
-pub struct LedRuntimeOptions {
-    pub(crate) gpio_slowdown: c_int,
-    pub(crate) daemon: c_int,
-    pub(crate) drop_privileges: c_int,
-    pub(crate) do_gpio_init: bool,
 }
 
 impl LedMatrixOptions {
@@ -213,40 +200,136 @@ impl Drop for LedMatrixOptions {
     }
 }
 
-impl LedRuntimeOptions {
-    /// Creates a new `LedRuntimeOptions` struct with the default parameters.
-    pub fn new() -> Self {
-        Self {
-            daemon: 0,
-            do_gpio_init: true,
-            drop_privileges: 1,
-            gpio_slowdown: 1,
-        }
-    }
+pub enum GpioMapping {
+    Regular,
+    AdafruitHat,
+    AdafruitHatPwm,
+    RegularPi1,
+    Classic,
+    ClassicPi1,
+}
 
-    /// Sets the GPIO slowdown, in . Needed for faster Pis/slower panels
-    pub fn set_gpio_slowdown(&mut self, gpio_slowdown: i32) {
-        self.gpio_slowdown = gpio_slowdown as i32;
-    }
+impl Into<CStringPtr> for GpioMapping {
+    fn into(self) -> CStringPtr {
+        let mapping_str = match self {
+            Self::Regular => "regular",
+            Self::AdafruitHat => "adafruit-hat",
+            Self::AdafruitHatPwm => "adafruit-hat-pwm",
+            Self::RegularPi1 => "regular-pi1",
+            Self::Classic => "classic",
+            Self::ClassicPi1 => "classic-pi1",
+        };
 
-    /// If True, make the process run in the background as daemon.
-    pub fn set_daemon(&mut self, daemon: bool) {
-        self.daemon = if daemon { 1 } else { 0 };
-    }
-
-    /// If True, drop privileges from 'root' after initializing the hardware.
-    pub fn set_drop_privileges(&mut self, drop_privileges: bool) {
-        self.drop_privileges = if drop_privileges { 1 } else { 0 };
-    }
-
-    /// You almost definitely want this to be left as True. Use this if you know what you're doing.
-    pub fn set_do_gpio_init(&mut self, do_gpio_init: bool) {
-        self.do_gpio_init = do_gpio_init;
+        CString::new(mapping_str).unwrap().into_raw()
     }
 }
 
-impl Default for LedRuntimeOptions {
+#[derive(IntoPrimitive)]
+#[repr(i32)]
+pub enum MuxType {
+    Direct,
+    Stripe,
+    Checkered,
+    Spiral,
+    ZStripe,
+    ZnMirrorZStripe,
+    Coreman,
+    Kaler2Scan,
+    ZStripeUneven,
+    P10128x4Z,
+    QiangLiQ8,
+    InversedZStripe,
+    P10Outdoor1R1G1_1,
+    P10Outdoor1R1G1_2,
+    P10Outdoor1R1G1_3,
+    P10CoremanMapper,
+    P8Outdoor1R1G1,
+}
+
+impl Default for MuxType {
     fn default() -> Self {
-        Self::new()
+        Self::Direct
     }
+}
+
+pub enum RgbSequence {
+    RGB,
+    BGR,
+    BRG,
+    RBG,
+    GRB,
+    GBR,
+}
+
+impl Default for RgbSequence {
+    fn default() -> Self {
+        Self::RGB
+    }
+}
+
+impl Into<CStringPtr> for RgbSequence {
+    fn into(self) -> CStringPtr {
+        let seq = match self {
+            Self::RGB => "RGB",
+            Self::BGR => "BGR",
+            Self::BRG => "BRG",
+            Self::RBG => "RBG",
+            Self::GRB => "GRB",
+            Self::GBR => "GBR",
+        };
+
+        CString::new(seq).unwrap().into_raw()
+    }
+}
+
+#[derive(IntoPrimitive)]
+#[repr(i32)]
+pub enum RowAddressType {
+    //// Corresponds to direct setting of the row.
+    Direct,
+    /// Used for panels that only have A/B. (typically some 64x64 panels)
+    AB,
+    /// Direct row select.
+    DirectRow,
+    /// ABC addressed panels
+    ABC,
+    /// 4 = ABC Shift + DE direct
+    ABCShift,
+}
+
+impl Default for RowAddressType {
+    fn default() -> Self {
+        Self::Direct
+    }
+}
+
+pub enum PanelType {
+    FM6126,
+    FM6127,
+    Unset,
+}
+
+impl Into<CStringPtr> for PanelType {
+    fn into(self) -> CStringPtr {
+        let mapping_str = match self {
+            Self::FM6126 => "fm6126",
+            Self::FM6127 => "fm6127",
+            Self::Unset => "",
+        };
+
+        CString::new(mapping_str).unwrap().into_raw()
+    }
+}
+
+impl Default for PanelType {
+    fn default() -> Self {
+        Self::Unset
+    }
+}
+
+#[derive(IntoPrimitive)]
+#[repr(i32)]
+pub enum ScanMode {
+    Progressive,
+    Interlaced,
 }

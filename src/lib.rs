@@ -7,5 +7,5 @@ mod c;
 pub mod canvas;
 pub mod led;
 pub mod matrix;
-pub mod options;
-pub mod option_types;
+pub mod matrix_options;
+pub mod runtime_options;

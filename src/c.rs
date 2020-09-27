@@ -1,4 +1,5 @@
-use crate::options::{LedMatrixOptions, LedRuntimeOptions};
+use crate::matrix_options::LedMatrixOptions;
+use crate::runtime_options::LedRuntimeOptions;
 use libc::{c_char, c_int, size_t};
 
 pub(crate) enum LedMatrix {}
