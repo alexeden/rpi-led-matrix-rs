@@ -32,7 +32,6 @@ fn main() {
     mat.sync();
     wait(1000);
 
-    println!("Size: {:?}", mat.get_size());
     mat.fill(&LedColor::g(255));
     mat.sync();
     wait(1000);
