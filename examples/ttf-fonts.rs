@@ -26,26 +26,27 @@ fn main() {
 
     (0..).for_each(|dx| {
         mat.clear();
-        font.layout("Serving TTF lewks.", scale, point(0., v_metrics.ascent))
-            .for_each(|glyph| {
-                if let Some(bounding_box) = glyph.pixel_bounding_box() {
-                    // Draw the glyph into the image per-pixel by using the draw closure
-                    glyph.draw(|x, y, v| {
-                        let alpha = (255. * v) as u8;
-                        let mut x = x as i32 - dx + bounding_box.min.x;
+        let dx = dx % mat.width();
 
-                        while x < 0 {
-                            x = x + mat.width()
-                        }
-
-                        mat.set(
-                            x,
-                            y as i32 + bounding_box.min.y,
-                            &Color::of(alpha, alpha, alpha),
-                        );
-                    });
-                }
-            });
+        font.layout(
+            "Serving TTF lewks.",
+            scale,
+            point(0., mat.height() as f32 - v_metrics.ascent.ceil()),
+        )
+        .for_each(|glyph| {
+            if let Some(bounding_box) = glyph.pixel_bounding_box() {
+                // Draw the glyph into the image per-pixel by using the draw closure
+                glyph.draw(|x, y, v| {
+                    let alpha = (255. * v) as u8;
+                    let x = x as i32 - dx + bounding_box.min.x;
+                    mat.set(
+                        if x < 0 { x + mat.width() } else { x },
+                        y as i32 + bounding_box.min.y,
+                        &Color::of(alpha, alpha, alpha),
+                    );
+                });
+            }
+        });
         mat.sync();
         wait(10);
     });
