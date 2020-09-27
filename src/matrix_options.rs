@@ -38,7 +38,7 @@ impl LedMatrixOptions {
             chain_length: 1,
             cols: 32,
             disable_hardware_pulsing: 1,
-            hardware_mapping: GpioMapping::Regular.into(),
+            hardware_mapping: GpioMapping::default().into(),
             inverse_colors: 0,
             led_rgb_sequence: RgbSequence::default().into(),
             limit_refresh_rate_hz: 0,
@@ -57,11 +57,12 @@ impl LedMatrixOptions {
     }
 
     /// Sets the type of GPIO mapping used
-    pub fn set_hardware_mapping(&mut self, mapping: GpioMapping) {
+    pub fn set_hardware_mapping(mut self, mapping: GpioMapping) -> Self {
         unsafe {
             let _ = CString::from_raw(self.hardware_mapping);
             self.hardware_mapping = mapping.into();
         }
+        self
     }
 
     /// Sets the number of rows on the panels being used. Typically 8, 16, 32 or 64.
@@ -223,6 +224,12 @@ pub enum GpioMapping {
     RegularPi1,
     Classic,
     ClassicPi1,
+}
+
+impl Default for GpioMapping {
+    fn default() -> Self {
+        Self::Regular
+    }
 }
 
 impl Into<CStringPtr> for GpioMapping {
