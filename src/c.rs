@@ -28,6 +28,8 @@ extern "C" {
     pub(crate) fn led_canvas_clear(canvas: *mut LedCanvas);
     pub(crate) fn led_canvas_fill(canvas: *mut LedCanvas, r: u8, g: u8, b: u8);
     pub(crate) fn led_matrix_create_offscreen_canvas(matrix: *mut LedMatrix) -> *mut LedCanvas;
+    pub(crate) fn led_matrix_get_brightness(matrix: *mut LedMatrix) -> u8;
+    pub(crate) fn led_matrix_set_brightness(matrix: *mut LedMatrix, brightness: u8);
     pub(crate) fn led_matrix_swap_on_vsync(
         matrix: *mut LedMatrix,
         canvas: *mut LedCanvas,

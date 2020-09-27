@@ -49,6 +49,18 @@ impl LedMatrix {
             handle: unsafe { c::led_matrix_swap_on_vsync(self.handle, canvas.handle) },
         }
     }
+
+    /// Gets the matrix brightness.
+    pub fn get_brightness(&self) -> u8 {
+        unsafe { c::led_matrix_get_brightness(self.handle) }
+    }
+
+    /// Sets the matrix brightness.
+    pub fn set_brightness(&self, brightness: u8) {
+        unsafe {
+            c::led_matrix_set_brightness(self.handle, brightness);
+        }
+    }
 }
 
 impl Drop for LedMatrix {

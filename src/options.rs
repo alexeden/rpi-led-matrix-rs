@@ -204,6 +204,7 @@ impl Default for LedMatrixOptions {
 
 impl Drop for LedMatrixOptions {
     fn drop(&mut self) {
+        println!("Dropping LedMatrixOptions!");
         unsafe {
             let _ = CString::from_raw(self.hardware_mapping);
             let _ = CString::from_raw(self.led_rgb_sequence);
