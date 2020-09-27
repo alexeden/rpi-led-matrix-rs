@@ -1,4 +1,5 @@
-use embedded_graphics::pixelcolor::{PixelColor, raw::RawU24};
+use embedded_graphics::pixelcolor::{Rgb565, RgbColor};
+use embedded_graphics::pixelcolor::{raw::RawU24, PixelColor};
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Color {
@@ -15,4 +16,14 @@ impl Color {
 
 impl PixelColor for Color {
     type Raw = RawU24;
+}
+
+impl From<Rgb565> for Color {
+    fn from(p: Rgb565) -> Self {
+        Color {
+            r: p.r() << 3,
+            g: p.g() << 2,
+            b: p.b() << 3,
+        }
+    }
 }

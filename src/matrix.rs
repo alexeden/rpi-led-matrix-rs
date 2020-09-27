@@ -1,3 +1,4 @@
+use embedded_graphics::prelude::PixelColor;
 use crate::{c, led::Color, matrix_options::LedMatrixOptions, runtime_options::LedRuntimeOptions};
 use embedded_graphics::{drawable::Pixel, prelude::Size, DrawTarget};
 use libc::c_int;
@@ -128,13 +129,17 @@ impl Drop for LedMatrix {
     }
 }
 
+#[derive(Debug)]
 pub enum DrawError {}
 
-impl DrawTarget<Color> for LedMatrix {
+impl<C> DrawTarget<C> for LedMatrix
+where
+    C: Into<Color> + PixelColor,
+{
     type Error = DrawError;
 
-    fn draw_pixel(&mut self, item: Pixel<Color>) -> Result<(), Self::Error> {
-        self.set(item.0.x, item.0.y, &item.1);
+    fn draw_pixel(&mut self, item: Pixel<C>) -> Result<(), Self::Error> {
+        self.set(item.0.x, item.0.y, &item.1.into());
         Ok(())
     }
 
