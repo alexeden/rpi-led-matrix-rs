@@ -1,4 +1,5 @@
 use rpi_led_matrix::{
+    led::LedColor,
     matrix::LedMatrix,
     matrix_options::{GpioMapping, LedMatrixOptions},
     runtime_options::LedRuntimeOptions,
@@ -20,6 +21,7 @@ fn main() {
 
     let mut mat = LedMatrix::new(Some(mat_options), Some(rt_options)).expect("Matrix creation");
 
+    mat.fill(&LedColor::r(255));
     mat.sync();
 
     wait(5);
