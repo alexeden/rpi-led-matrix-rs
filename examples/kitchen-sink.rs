@@ -15,6 +15,7 @@ fn main() {
         .set_rows(32)
         .set_chain_length(2)
         .set_hardware_mapping(GpioMapping::Regular)
+        .set_pwm_lsb_nanoseconds(130)
         .set_parallel(1);
 
     let rt_options = LedRuntimeOptions::default().set_gpio_slowdown(4);
@@ -23,6 +24,17 @@ fn main() {
 
     mat.fill(&LedColor::r(255));
     mat.sync();
+    wait(1);
+    println!(
+        "Matrix height: {:?}, width: {:?}",
+        mat.height(),
+        mat.width()
+    );
 
-    wait(5);
+    mat.fill(&LedColor::g(255));
+    mat.sync();
+    wait(1);
+    mat.fill(&LedColor::b(255));
+    mat.sync();
+    wait(1);
 }

@@ -79,7 +79,9 @@ impl SyncConfig {
         cmd.arg(self.path.parent().unwrap());
 
         // Destination
-        cmd.arg(self.selected_remote().to_string());
+        let dest = self.selected_remote().to_string();
+        println!("Sync destination: {:?}", dest);
+        cmd.arg(dest);
 
         cmd.status().expect("Failed to run command.")
     }
