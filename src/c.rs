@@ -1,5 +1,5 @@
 use crate::options::{LedMatrixOptions, LedRuntimeOptions};
-use libc::c_int;
+use libc::{c_char, c_int, size_t};
 
 pub(crate) enum LedMatrix {}
 pub(crate) enum LedCanvas {}
@@ -52,5 +52,15 @@ extern "C" {
         r: u8,
         g: u8,
         b: u8,
+    );
+    pub(crate) fn set_image(
+        canvas: *mut LedCanvas,
+        canvas_offset_x: c_int,
+        canvas_offset_y: c_int,
+        image_buffer: *const u8,
+        buffer_size_bytes: size_t,
+        image_width: c_int,
+        image_height: c_int,
+        is_bgr: c_char,
     );
 }
