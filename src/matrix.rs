@@ -1,6 +1,5 @@
-use crate::{
-    c, led::LedColor, matrix_options::LedMatrixOptions, runtime_options::LedRuntimeOptions,
-};
+use crate::{c, led::Color, matrix_options::LedMatrixOptions, runtime_options::LedRuntimeOptions};
+use embedded_graphics::{drawable::Pixel, prelude::Size, DrawTarget};
 use libc::c_int;
 
 pub struct LedMatrix {
@@ -71,7 +70,7 @@ impl LedMatrix {
         }
     }
 
-    pub fn circle(&mut self, x: i32, y: i32, radius: u32, LedColor { r, g, b }: &LedColor) {
+    pub fn circle(&mut self, x: i32, y: i32, radius: u32, Color { r, g, b }: &Color) {
         unsafe {
             c::draw_circle(
                 self.canvas,
@@ -85,7 +84,7 @@ impl LedMatrix {
         }
     }
 
-    pub fn fill(&mut self, LedColor { r, g, b }: &LedColor) {
+    pub fn fill(&mut self, Color { r, g, b }: &Color) {
         unsafe {
             c::led_canvas_fill(self.canvas, *r, *g, *b);
         }
@@ -95,7 +94,7 @@ impl LedMatrix {
         self.size.1
     }
 
-    pub fn line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, LedColor { r, g, b }: &LedColor) {
+    pub fn line(&mut self, x0: i32, y0: i32, x1: i32, y1: i32, Color { r, g, b }: &Color) {
         unsafe {
             c::draw_line(
                 self.canvas,
@@ -110,7 +109,7 @@ impl LedMatrix {
         }
     }
 
-    pub fn set(&mut self, x: i32, y: i32, color: &LedColor) {
+    pub fn set(&mut self, x: i32, y: i32, color: &Color) {
         unsafe {
             c::led_canvas_set_pixel(self.canvas, x, y, color.r, color.g, color.b);
         }
@@ -119,33 +118,30 @@ impl LedMatrix {
     pub fn width(&self) -> i32 {
         self.size.0
     }
-
-    // Retrieves the on screen canvas.
-    // pub fn canvas(&self) -> LedCanvas {
-    //     LedCanvas {
-    //         handle: unsafe { c::led_matrix_get_canvas(self.handle) },
-    //     }
-    // }
-
-    // Retrieves the offscreen canvas. Used in conjunction with [swap](LedMatrix.swap).
-    // pub fn offscreen_canvas(&self) -> LedCanvas {
-    //     LedCanvas {
-    //         handle: unsafe { c::led_matrix_create_offscreen_canvas(self.handle) },
-    //     }
-    // }
-
-    // Cleanly swaps the canvas on v-sync, returning the off-screen canvas for updating.
-    // pub fn swap(&self, canvas: LedCanvas) -> LedCanvas {
-    //     LedCanvas {
-    //         handle: unsafe { c::led_matrix_swap_on_vsync(self.handle, canvas.handle) },
-    //     }
-    // }
 }
 
 impl Drop for LedMatrix {
     fn drop(&mut self) {
         unsafe {
             c::led_matrix_delete(self.handle);
+        }
+    }
+}
+
+pub enum DrawError {}
+
+impl DrawTarget<Color> for LedMatrix {
+    type Error = DrawError;
+
+    fn draw_pixel(&mut self, item: Pixel<Color>) -> Result<(), Self::Error> {
+        self.set(item.0.x, item.0.y, &item.1);
+        Ok(())
+    }
+
+    fn size(&self) -> Size {
+        Size {
+            width: self.width() as u32,
+            height: self.height() as u32,
         }
     }
 }

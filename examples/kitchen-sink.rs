@@ -1,5 +1,5 @@
 use rpi_led_matrix::{
-    led::LedColor,
+    led::Color,
     matrix::LedMatrix,
     matrix_options::{GpioMapping, LedMatrixOptions},
     runtime_options::LedRuntimeOptions,
@@ -28,22 +28,22 @@ fn main() {
         mat.height(),
         mat.width()
     );
-    mat.fill(&LedColor::of(255, 0, 0));
+    mat.fill(&Color::of(255, 0, 0));
     mat.sync();
     wait(1000);
 
-    mat.fill(&LedColor::of(0, 255, 0));
+    mat.fill(&Color::of(0, 255, 0));
     mat.sync();
     wait(1000);
 
-    mat.fill(&LedColor::of(0, 0, 255));
+    mat.fill(&Color::of(0, 0, 255));
     mat.sync();
     wait(1000);
 
     // Sweep with line horizontally
     (0..=mat.width()).for_each(|x| {
         mat.clear();
-        mat.line(x, 0, x, mat.height(), &LedColor::of(255, 255, 255));
+        mat.line(x, 0, x, mat.height(), &Color::of(255, 255, 255));
         mat.sync();
         wait(12);
     });
