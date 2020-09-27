@@ -65,27 +65,31 @@ impl LedMatrixOptions {
     }
 
     /// Sets the number of rows on the panels being used. Typically 8, 16, 32 or 64.
-    pub fn set_rows(&mut self, rows: i32) {
+    pub fn set_rows(mut self, rows: i32) -> Self {
         self.rows = rows as c_int;
+        self
     }
 
     /// Sets the number of columns on the panels being used. Typically 32 or 64.
-    pub fn set_cols(&mut self, cols: i32) {
+    pub fn set_cols(mut self, cols: i32) -> Self {
         self.cols = cols as c_int;
+        self
     }
 
     /// Sets the number of panels daisy-chained together.
-    pub fn set_chain_length(&mut self, chain_length: i32) {
+    pub fn set_chain_length(mut self, chain_length: i32) -> Self {
         self.chain_length = chain_length as c_int;
+        self
     }
 
     /// Sets the number of parallel chains. Valid range: [1,3].
-    pub fn set_parallel(&mut self, parallel: i32) {
+    pub fn set_parallel(mut self, parallel: i32) -> Self {
         self.parallel = parallel as c_int;
+        self
     }
 
     /// Sets the number of PWM bits to use. Valid range: [1,11].
-    pub fn set_pwm_bits(&mut self, pwm_bits: u8) -> LedMatrixOptionsResult {
+    pub fn set_pwm_bits(mut self, pwm_bits: u8) -> LedMatrixOptionsResult {
         if pwm_bits > 11 {
             Err("Pwm bits can only have value between 0 and 11 inclusive")
         } else {
@@ -95,12 +99,13 @@ impl LedMatrixOptions {
     }
 
     /// Sets the number of nanoseconds of delay for our LSB
-    pub fn set_pwm_lsb_nanoseconds(&mut self, pwm_lsb_nanoseconds: i32) {
+    pub fn set_pwm_lsb_nanoseconds(mut self, pwm_lsb_nanoseconds: i32) -> Self {
         self.pwm_lsb_nanoseconds = pwm_lsb_nanoseconds as c_int;
+        self
     }
 
     /// Sets the pannel brightness in percent.
-    pub fn set_brightness(&mut self, brightness: u8) -> LedMatrixOptionsResult {
+    pub fn set_brightness(mut self, brightness: u8) -> LedMatrixOptionsResult {
         if brightness > 100 || brightness < 1 {
             Err("Brigthness can only have value between 1 and 100 inclusive")
         } else {
@@ -110,16 +115,18 @@ impl LedMatrixOptions {
     }
 
     /// Sets the scan mode.
-    pub fn set_scan_mode(&mut self, scan_mode: ScanMode) {
+    pub fn set_scan_mode(mut self, scan_mode: ScanMode) -> Self {
         self.scan_mode = scan_mode as c_int;
+        self
     }
 
     /// Sets the ordering of the LEDs on your panel.
-    pub fn set_led_rgb_sequence(&mut self, sequence: RgbSequence) {
+    pub fn set_led_rgb_sequence(mut self, sequence: RgbSequence) -> Self {
         unsafe {
             let _ = CString::from_raw(self.led_rgb_sequence);
             self.led_rgb_sequence = sequence.into();
         }
+        self
     }
 
     /// Semicolon-separated list of pixel-mappers to arrange pixels (e.g. "U-mapper;Rotate:90").
@@ -130,56 +137,65 @@ impl LedMatrixOptions {
     /// * Rotate:<Angle>
     /// * U-mapper
     /// * V-mapper
-    pub fn set_pixel_mapper_config(&mut self, mapper: &str) {
+    pub fn set_pixel_mapper_config(mut self, mapper: &str) -> Self {
         unsafe {
             let _ = CString::from_raw(self.pixel_mapper_config);
             self.pixel_mapper_config = CString::new(mapper).unwrap().into_raw();
         }
+        self
     }
 
     /// Sets if hardware pin-pulse generation should be used.
-    pub fn set_hardware_pulsing(&mut self, enable: bool) {
+    pub fn set_hardware_pulsing(mut self, enable: bool) -> Self {
         self.disable_hardware_pulsing = if enable { 0 } else { 1 };
+        self
     }
 
     /// Configures if the current refresh rate should be printed by the C++ library.
-    pub fn set_refresh_rate(&mut self, enable: bool) {
+    pub fn set_refresh_rate(mut self, enable: bool) -> Self {
         self.show_refresh_rate = if enable { 1 } else { 0 };
+        self
     }
 
     /// If set, invert the color displayed.
-    pub fn set_inverse_colors(&mut self, enable: bool) {
+    pub fn set_inverse_colors(mut self, enable: bool) -> Self {
         self.inverse_colors = if enable { 1 } else { 0 };
+        self
     }
 
     /// Sets the type of multiplexing used.
-    pub fn set_multiplexing(&mut self, multiplexing: MuxType) {
+    pub fn set_multiplexing(mut self, multiplexing: MuxType) -> Self {
         self.multiplexing = multiplexing.into();
+        self
     }
 
     /// Sets the type of row addressing to be used.
-    pub fn set_row_addr_type(&mut self, row_addr_type: RowAddressType) {
+    pub fn set_row_addr_type(mut self, row_addr_type: RowAddressType) -> Self {
         self.row_address_type = row_addr_type as c_int;
+        self
     }
 
     /// Limit refresh rate to this frequency in Hz. (0 = no limit)
     ///
     /// Useful to keep a constant refresh rate on loaded system.
-    pub fn set_limit_refresh(&mut self, limit_refresh: i32) {
+    pub fn set_limit_refresh(mut self, limit_refresh: i32) -> Self {
         self.limit_refresh_rate_hz = limit_refresh as c_int;
+        self
     }
 
     /// Configures how many bits to use for time-based dithering.
-    pub fn set_pwm_dither_bits(&mut self, pwm_dither_bits: i32) {
+    pub fn set_pwm_dither_bits(mut self, pwm_dither_bits: i32) -> Self {
         self.pwm_dither_bits = pwm_dither_bits as c_int;
+        self
     }
 
     /// Needed to initialize special panels. Supported: 'FM6126A', 'FM6127'
-    pub fn set_panel_type(&mut self, panel_type: PanelType) {
+    pub fn set_panel_type(mut self, panel_type: PanelType) -> Self {
         unsafe {
             let _ = CString::from_raw(self.panel_type);
             self.panel_type = panel_type.into();
         }
+        self
     }
 }
 
