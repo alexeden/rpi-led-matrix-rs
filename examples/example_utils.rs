@@ -12,7 +12,7 @@ pub fn create_matrix() -> LedMatrix {
         .set_rows(32)
         .set_chain_length(2)
         .set_hardware_mapping(GpioMapping::Regular)
-        .set_pwm_lsb_nanoseconds(130)
+        .set_pwm_lsb_nanoseconds(150)
         .set_pwm_dither_bits(0)
         .set_parallel(1);
 

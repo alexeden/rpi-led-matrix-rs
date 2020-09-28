@@ -14,8 +14,18 @@ pub struct LedMatrixOptions {
     pub(crate) cols: c_int,
     pub(crate) chain_length: c_int,
     pub(crate) parallel: c_int,
+    /// PWM bits used for output. The maximum value is 11. Lower values
+    /// will increase performance at the expense of color precision.
+    /// Default is 11.
     pub(crate) pwm_bits: c_int,
+    /// Change the base time-unit for the on-time in the lowest significant bit in nanoseconds.
+    /// Higher values will provide better image quality(more accurate color, less ghosting)
+    /// at the expense of frame rate.
+    /// Defualt is 1000.
     pub(crate) pwm_lsb_nanoseconds: c_int,
+    /// Configures how many bits to use for time-based dithering.
+    /// The lower bits can be time-dithered for higher refresh rate.
+    /// Default is 1.
     pub(crate) pwm_dither_bits: c_int,
     pub(crate) brightness: c_int,
     pub(crate) scan_mode: c_int,
