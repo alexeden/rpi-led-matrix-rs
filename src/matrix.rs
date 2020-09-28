@@ -1,19 +1,19 @@
 use embedded_graphics::prelude::PixelColor;
-use crate::{c, led::Color, matrix_options::LedMatrixOptions, runtime_options::LedRuntimeOptions};
+use crate::{c, led::Color, matrix_options::MatrixOptions, runtime_options::RuntimeOptions};
 use embedded_graphics::{drawable::Pixel, prelude::Size, DrawTarget};
 use libc::c_int;
 
-pub struct LedMatrix {
-    handle: *mut c::LedMatrix,
-    canvas: *mut c::LedCanvas,
+pub struct Matrix {
+    handle: *mut c::Matrix,
+    canvas: *mut c::Canvas,
     size: (i32, i32),
 }
 
-impl LedMatrix {
+impl Matrix {
     /// Creates the rust handle for the RGB matrix, given the optional options.
     pub fn new(
-        mat_options: Option<LedMatrixOptions>,
-        rt_options: Option<LedRuntimeOptions>,
+        mat_options: Option<MatrixOptions>,
+        rt_options: Option<RuntimeOptions>,
     ) -> Result<Self, &'static str> {
         let mat_options = mat_options.unwrap_or_default();
         let rt_options = rt_options.unwrap_or_default();
@@ -26,13 +26,13 @@ impl LedMatrix {
         };
 
         if handle.is_null() {
-            return Err("Failed to create LedMatrix. Handle is null.");
+            return Err("Failed to create Matrix. Handle is null.");
         }
 
         let canvas = unsafe { c::led_matrix_create_offscreen_canvas(handle) };
 
         if canvas.is_null() {
-            return Err("Failed to create the matrix LedCanvas. Canvas handle is null.");
+            return Err("Failed to create the matrix Canvas. Canvas handle is null.");
         }
 
         let (mut w, mut h): (c_int, c_int) = (0, 0);
@@ -121,7 +121,7 @@ impl LedMatrix {
     }
 }
 
-impl Drop for LedMatrix {
+impl Drop for Matrix {
     fn drop(&mut self) {
         unsafe {
             c::led_matrix_delete(self.handle);
@@ -132,7 +132,7 @@ impl Drop for LedMatrix {
 #[derive(Debug)]
 pub enum DrawError {}
 
-impl<C> DrawTarget<C> for LedMatrix
+impl<C> DrawTarget<C> for Matrix
 where
     C: Into<Color> + PixelColor,
 {

@@ -2,12 +2,12 @@
 /// There's enough boilerplate involved in creating a matrix with a lot of custom
 /// options that I'm creating this function that can be used by other examples.
 use rpi_led_matrix::{
-    matrix::LedMatrix, matrix_options::GpioMapping, matrix_options::LedMatrixOptions,
-    runtime_options::LedRuntimeOptions,
+    matrix::Matrix, matrix_options::GpioMapping, matrix_options::MatrixOptions,
+    runtime_options::RuntimeOptions,
 };
 
-pub fn create_matrix() -> LedMatrix {
-    let mat_options = LedMatrixOptions::default()
+pub fn create_matrix() -> Matrix {
+    let mat_options = MatrixOptions::default()
         .set_cols(64)
         .set_rows(32)
         .set_chain_length(2)
@@ -16,9 +16,9 @@ pub fn create_matrix() -> LedMatrix {
         .set_pwm_dither_bits(0)
         .set_parallel(1);
 
-    let rt_options = LedRuntimeOptions::default().set_gpio_slowdown(4);
+    let rt_options = RuntimeOptions::default().set_gpio_slowdown(4);
 
-    LedMatrix::new(Some(mat_options), Some(rt_options)).expect("Matrix creation")
+    Matrix::new(Some(mat_options), Some(rt_options)).expect("Matrix creation")
 }
 
 pub fn wait(msecs: u64) {

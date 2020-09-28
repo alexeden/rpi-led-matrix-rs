@@ -1,17 +1,17 @@
 use libc::c_int;
 
-/// The Rust representation of LedRuntimeOptions, which contains parameters to specify how the library behaves at runtime.
+/// The Rust representation of RuntimeOptions, which contains parameters to specify how the library behaves at runtime.
 #[derive(Debug)]
 #[repr(C)]
-pub struct LedRuntimeOptions {
+pub struct RuntimeOptions {
     pub(crate) gpio_slowdown: c_int,
     pub(crate) daemon: c_int,
     pub(crate) drop_privileges: c_int,
     pub(crate) do_gpio_init: bool,
 }
 
-impl LedRuntimeOptions {
-    /// Creates a new `LedRuntimeOptions` struct with the default parameters.
+impl RuntimeOptions {
+    /// Creates a new `RuntimeOptions` struct with the default parameters.
     pub fn new() -> Self {
         Self {
             daemon: 0,
@@ -46,7 +46,7 @@ impl LedRuntimeOptions {
     }
 }
 
-impl Default for LedRuntimeOptions {
+impl Default for RuntimeOptions {
     fn default() -> Self {
         Self::new()
     }

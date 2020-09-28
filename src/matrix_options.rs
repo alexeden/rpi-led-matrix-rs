@@ -1,14 +1,14 @@
 use libc::{c_char, c_int};
 use std::ffi::CString;
 
-type LedMatrixOptionsResult = Result<(), &'static str>;
+type MatrixOptionsResult = Result<(), &'static str>;
 type CStringPtr = *mut c_char;
 
-/// The Rust representation of LedMatrixOptions, which contains parameters to specify your hardware setup.
+/// The Rust representation of MatrixOptions, which contains parameters to specify your hardware setup.
 /// !!! DO NOT CHANGE THE ORDER OF THE FIELDS !!!
 #[derive(Debug)]
 #[repr(C)]
-pub struct LedMatrixOptions {
+pub struct MatrixOptions {
     pub(crate) hardware_mapping: *mut c_char,
     pub(crate) rows: c_int,
     pub(crate) cols: c_int,
@@ -40,10 +40,10 @@ pub struct LedMatrixOptions {
     pub(crate) limit_refresh_rate_hz: c_int,
 }
 
-impl LedMatrixOptions {
-    /// Creates a new `LedMatrixOptions` struct with the default parameters.
-    pub fn new() -> LedMatrixOptions {
-        LedMatrixOptions {
+impl MatrixOptions {
+    /// Creates a new `MatrixOptions` struct with the default parameters.
+    pub fn new() -> MatrixOptions {
+        MatrixOptions {
             brightness: 100,
             chain_length: 1,
             cols: 32,
@@ -100,7 +100,7 @@ impl LedMatrixOptions {
     }
 
     /// Sets the number of PWM bits to use. Valid range: [1,11].
-    pub fn set_pwm_bits(mut self, pwm_bits: u8) -> LedMatrixOptionsResult {
+    pub fn set_pwm_bits(mut self, pwm_bits: u8) -> MatrixOptionsResult {
         if pwm_bits > 11 {
             Err("Pwm bits can only have value between 0 and 11 inclusive")
         } else {
@@ -116,7 +116,7 @@ impl LedMatrixOptions {
     }
 
     /// Sets the pannel brightness in percent.
-    pub fn set_brightness(mut self, brightness: u8) -> LedMatrixOptionsResult {
+    pub fn set_brightness(mut self, brightness: u8) -> MatrixOptionsResult {
         if brightness > 100 || brightness < 1 {
             Err("Brigthness can only have value between 1 and 100 inclusive")
         } else {
@@ -203,15 +203,15 @@ impl LedMatrixOptions {
     }
 }
 
-impl Default for LedMatrixOptions {
+impl Default for MatrixOptions {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl Drop for LedMatrixOptions {
+impl Drop for MatrixOptions {
     fn drop(&mut self) {
-        println!("Dropping LedMatrixOptions!");
+        println!("Dropping MatrixOptions!");
         unsafe {
             let _ = CString::from_raw(self.hardware_mapping);
             let _ = CString::from_raw(self.led_rgb_sequence);
