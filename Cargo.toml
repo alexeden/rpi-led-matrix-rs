@@ -1,3 +1,8 @@
+[workspace]
+members = [
+  "tools"
+]
+
 [package]
 name = "rpi_led_matrix"
 version = "0.1.0"
@@ -5,21 +10,11 @@ authors = ["Alex Eden <alexandereden91@gmail.com>"]
 links = "rgbmatrix"
 edition = "2018"
 
-[[bin]]
-name = "sync"
-path = "./sync.rs"
-
-[[example]]
-name = "minimal"
-path = "examples/minimal.rs"
-
 [dependencies]
 embedded-graphics = "0.6.2"
 libc = "0.2.77"
 num_enum = "0.5.1"
 rusttype = "0.9.2"
-serde = { version = "1.0.116", features = ["derive"] }
-toml = "0.5.6"
 
 [build-dependencies]
 cc = "1.0.60"

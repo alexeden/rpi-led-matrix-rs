@@ -1,4 +1,7 @@
-[tasks.sync-remote]
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+
+[tasks.sync]
 command = "cargo"
-args = ["run", "--bin", "sync"]
+args = ["run", "--package", "tools", "--bin", "sync"]
 watch = true
